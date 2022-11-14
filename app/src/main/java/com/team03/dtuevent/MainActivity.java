@@ -14,12 +14,6 @@ import com.team03.dtuevent.databinding.ActivityMainBinding;
 import com.team03.dtuevent.preferences.Settings;
 //import com.team03.dtuevent.ui.CSOnboarding;
 
-/**
- * NOTE:
- *
- * Tag EXPM is used for experimental features.
- * Use Ctrl+Shift+F to perform project-wide search in Android Studio.
- */
 
 public class MainActivity extends AppCompatActivity {
 

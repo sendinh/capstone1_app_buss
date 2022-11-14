@@ -154,12 +154,8 @@ public class ScanFragment extends Fragment {
             // Get data.
             Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
             processImageUri(uri);
-            requireActivity().setIntent(null); // do not want multiple popups
+            requireActivity().setIntent(null);
         }
-
-
-
-
 
         // Initialise ViewModel
         vm = new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication()).create(ScanViewModel.class);
@@ -175,12 +171,10 @@ public class ScanFragment extends Fragment {
 
         vm.getModelDownloaded().observe(getViewLifecycleOwner(), downloaded -> {
             if (downloaded == Boolean.FALSE) {
-                // Not downloaded yet
                 Snackbar.make(view, R.string.no_model, Snackbar.LENGTH_LONG).show();
             }
         });
 
-        // Check if batch scan has been activated.
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         if (prefs.contains("batch_scan")) {
             vm.setBatchScanEnabled(prefs.getBoolean("batch_scan", false));
@@ -301,7 +295,6 @@ public class ScanFragment extends Fragment {
 
     private void processImage(InputStream inputStream, Bitmap bmp, Consumer<Boolean> detected) {
 
-        // Analysing as if image is upright as API should be able to detect rotated codes.
         InputImage inputImage = InputImage.fromBitmap(bmp, 0);
         barcodeScanner.process(inputImage)
                 .addOnSuccessListener(barcodes -> {
@@ -362,7 +355,6 @@ public class ScanFragment extends Fragment {
     }
 
     private void displayRationale() {
-        // Display a permission rationale.
         new MaterialAlertDialogBuilder(requireContext(), R.style.Theme_App_AlertDialogTheme)
                 .setTitle(R.string.cam_pm)
                 .setMessage(R.string.grant_pm_rationale)
@@ -409,7 +401,6 @@ public class ScanFragment extends Fragment {
     @SuppressLint("ClickableViewAccessibility")
     public void startCamera() {
         CameraFailureCallback cameraFailureCallback = cameraFailureDialog();
-        // Al‌‍‌‌‍‍‌‌‍‍‌‌‍‍‌‌‍‍‌‍‍‌‌‌‍‍‌‌‍‍‌‌‌‍‌‌‍‍‌‌‍‌‌‌‍‍‌‌‌‍‌‍‍‌‌‍‌‌‌‍‍‌‌‌‌‍‌‍‍‌‌‌‌‍‌‍‍‌‌‌‍‍‌‌‍‍‌‍‍‌‌‌‍‍‌‌‍‌‌‌‍‍‌‌‌‍‌‍‍‌‌‍‌‌‌‍‍‌‌‌‌‍‌‌‍‍‍‌‌‌‌‌‍‍‌‍‌‌‌‍‍‌‌‌‍‌‌‌‍‍‌‌‌‍‌‍‍‌‌‌‌‍‌‌‍‍‌‍‌‌‌‍‍‌‌‍‍‌‌‌‍‍‌‌‍‍‌‌‍‍‌‌‌‍‌‌‍‍‍‌‌‍‌‌‍‍‌‌‌‌‌‌‍‍‌‍‌‍‌‌‍‍‌‍‍‌‌‍‍‌‌‌‍‍‌‌‍‍‌‌‍‍‌‌‍‍‌‍‍‌‌‍‍‌‌‍‍‌‌‌‍‍‌‍‍‍‌‌‍‍‍‌‌‌‌‌‍‍‌‌‌‍‌‌‍‍‌‌‌‌‌‌‍‍‍‌‌‍‌‌‍‍‌‍‍‌‌‍‍‌‌‌‌‍‌‌‍‍‌‌‍‍‌‍‍‌‌‌‍‌‌‍‍‌‌‍‍‌‌‌‍‍‌‌‍‍‌‌‍‍‍‌‌‍‌‌‍‍‌‍‌‍‌‍‍‌‌‌‍‌‌‌‍‍‌‌‌‌‌‌‍‍‌‍‍‌‌‌‍‍‌‍‍‌‌‌‍‍‌‌‍‍‌‌‍‍‌‌‌‌‌‍‍‌‌‌‍‌‌‌‍‍‌‍‌‌‌‌‍‍‌‍‍‍‌‍‍‌‌‌‍‌‌‌‍‍‍‌‌‌‌‌‍‍‌‍‌‍‌‌‍‍‌‍‌‍‌‍‍‌‌‌‍‌‌‍‍‌‌‍‌‍‌‌‍‍‌‌‌‍‌‍‍‌‌‍‌‌‌‌‍‍‌‌‌‍‌‌‍‍‍‌‌‍low the class to modify the touch listener to accept zoom (on touches in the second future) in the first future. (async is complicated)
         SetTouchListenerCallback touchListenerCallback = listener -> binding.previewView.setOnTouchListener(listener);
 
         try {

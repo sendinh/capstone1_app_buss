@@ -83,7 +83,7 @@ dependencies {
 
 
     // Leak Canary
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
+ //   debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
 
 
 
@@ -118,6 +118,8 @@ dependencies {
 
 //    // Color Picker:
 //    implementation 'com.azeesoft.lib.colorpicker:colorpicker:1.0.8@aar'
+    implementation 'com.github.yukuku:ambilwarna:2.0.1'
+
 
     // VCard creator:
     implementation 'com.googlecode.ez-vcard:ez-vcard:0.11.2'
@@ -126,8 +128,6 @@ dependencies {
  //   implementation 'com.heinrichreimersoftware:material-intro:2.0.0'
     // ACRA crash reporting:
     implementation "ch.acra:acra-mail:5.9.0-rc2"
-
-
 
     // region Google Play specific libraries
     playImplementation 'com.google.android.gms:play-services-ads:20.5.0'
@@ -141,3 +141,8 @@ dependencies {
         }
     }
 }
+//repositories {
+//        maven {
+//            url 'https://bintray.com/azeesoft/maven'
+//        }
+//}

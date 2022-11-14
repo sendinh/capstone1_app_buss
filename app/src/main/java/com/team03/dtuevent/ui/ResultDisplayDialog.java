@@ -39,27 +39,27 @@ public class ResultDisplayDialog extends BottomSheetDialog {
     }
 
     private void populateLayout() {
-//        DateFormat dateFormat = DateFormat.getDateTimeInstance();
-//        binding.dateContents.setText(dateFormat.format(code.getTimeScanned()));
-//        binding.typeContents.setText(code.getDataType().getTypeName());
-//        binding.formatContents.setText(code.getFormatName(getContext()));
-//        binding.codeContentsText.setText(code.getData().getStringRepresentation());
-//
-//
-//        binding.actionsGroup.removeAllViews();
-//        Chip chip;
-//        for (Action obj : code.getDataType().getActions()) {
-//            chip = (Chip) getLayoutInflater()
-//                    .inflate(R.layout.template_chip, binding.actionsGroup, false);
-//            if (obj.getActionIcon() != null) {
-//                chip.setChipIconResource(obj.getActionIcon());
-//            }
-//            chip.setText(obj.getActionText());
-//            chip.setOnClickListener((v) -> {
-//                obj.performAction(getContext(), code.getData());
-//            });
-//            binding.actionsGroup.addView(chip);
-//        }
+        DateFormat dateFormat = DateFormat.getDateTimeInstance();
+        binding.dateContents.setText(dateFormat.format(code.getTimeScanned()));
+        binding.typeContents.setText(code.getDataType().getTypeName());
+        binding.formatContents.setText(code.getFormatName(getContext()));
+        binding.codeContentsText.setText(code.getData().getStringRepresentation());
+
+
+        binding.actionsGroup.removeAllViews();
+        Chip chip;
+        for (Action obj : code.getDataType().getActions()) {
+            chip = (Chip) getLayoutInflater()
+                    .inflate(R.layout.template_chip, binding.actionsGroup, false);
+            if (obj.getActionIcon() != null) {
+                chip.setChipIconResource(obj.getActionIcon());
+            }
+            chip.setText(obj.getActionText());
+            chip.setOnClickListener((v) -> {
+                obj.performAction(getContext(), code.getData());
+            });
+            binding.actionsGroup.addView(chip);
+        }
 
     }
 }
