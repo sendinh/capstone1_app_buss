@@ -1,10 +1,28 @@
 package com.team03.dtuevent.ui.fragment;
 
+import android.media.Image;
 import android.os.Bundle;
+
+import androidx.camera.core.Camera;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageProxy;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
+import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.mlkit.vision.barcode.Barcode;
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.team03.dtuevent.R;
 import static android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 import android.Manifest;
@@ -59,6 +77,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -70,13 +90,73 @@ public class ScanFragment extends Fragment {
     private ExecutorService camExecutor;
     private final static String TAG = "ScannerFragment";
     private ScanViewModel vm;
-    private final BarcodeScanner barcodeScanner = BarcodeScanning.getClient();
+    BarcodeScannerOptions options =
+            new BarcodeScannerOptions.Builder()
+                    .setBarcodeFormats(
+                            Barcode.FORMAT_ALL_FORMATS)
+                    .build();
+    private final BarcodeScanner barcodeScanner = BarcodeScanning.getClient(options);
 
     private static final int CAMERA_REQUEST_CODE = 1000;
     private static final int GALLERY_REQUEST_CODE = 1001;
+    private Camera camera;
 
 
+    private void readerBarcodeData(List<Barcode> barcodes) {
+        if (barcodes.isEmpty()) {
+//            Snackbar.make(requireView(), R.string.no_codes_detected, Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+        vm.scanBarcodes(barcodes);
+//        Log.d("ducnvx", "data "+list);
+    }
 
+    private void scanQrcode(ImageProxy imageProxy) {
+        @SuppressLint("UnsafeOptInUsageError") Image image = imageProxy.getImage();
+        assert image != null;
+        InputImage inputImage = InputImage.fromMediaImage(image, imageProxy.getImageInfo().getRotationDegrees());
+        BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS)
+                .build();
+        BarcodeScanner scanner = BarcodeScanning.getClient(options);
+        scanner.process(inputImage)
+                .addOnSuccessListener(barcodes -> readerBarcodeData(barcodes))
+                .addOnFailureListener(e -> {
+                })
+                .addOnCompleteListener(task -> {
+                    if (task.getResult().isEmpty()) {
+                        imageProxy.close();
+                    }
+                });
+    }
+
+    class ImageAnalyzer implements ImageAnalysis.Analyzer {
+
+        @Override
+        public void analyze(@NonNull ImageProxy imageProxy) {
+            scanQrcode(imageProxy);
+        }
+    }
+    private PreviewView previewView;
+    private ExecutorService cameraExecutor;
+    private ListenableFuture cameraProviderFuture;
+    private ImageAnalyzer imageAnalyzer;
+    private ProcessCameraProvider mCameraProvider;
+
+
+    private void bindPreview(ProcessCameraProvider cameraProvider) {
+        Preview preview = new Preview.Builder().build();
+        preview.setSurfaceProvider(previewView.getSurfaceProvider());
+        CameraSelector cameraSelector = new CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build();
+        ImageCapture imageCapture = new ImageCapture.Builder().build();
+        ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
+                .setTargetResolution(new Size(1280, 720))
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build();
+        imageAnalysis.setAnalyzer(cameraExecutor, imageAnalyzer);
+        cameraProvider.unbindAll();
+        camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture, imageAnalysis);
+    }
 
 
     @Override
@@ -89,30 +169,35 @@ public class ScanFragment extends Fragment {
         setHasOptionsMenu(true);
 
 
+        cameraExecutor = Executors.newSingleThreadExecutor();
+        cameraProviderFuture = ProcessCameraProvider.getInstance((getActivity()));
+        imageAnalyzer = new ImageAnalyzer();
+
         // Camera Use Cases:
-        UseCaseCreator useCaseCreator = () -> {
+//        UseCaseCreator useCaseCreator = () -> {
 
-            // Use Case 1: Preview
-            Preview preview = new Preview.Builder().build();
-            if (binding != null && binding.previewView != null) {
-                preview.setSurfaceProvider(binding.previewView.getSurfaceProvider());
-            }
-
-            // Use case 2: Barcode analysis
-            ImageAnalysis imageAnalysis = new ImageAnalysis.Builder()
-                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                    .build();
-
-            imageAnalysis.setAnalyzer(camExecutor, vm.getCodeAnalyser());
-
-            return new UseCase[]{preview, imageAnalysis};
-        };
-
-        try {
-            camAccessObj = new CamAccess(new WeakReference<>(getContext()), useCaseCreator);
-        } catch (NoCameraException e) {
-            noCamera();
+        // Use Case 1: Preview
+        Preview preview = new Preview.Builder().build();
+        if (binding != null && binding.previewView != null) {
+            previewView = binding.previewView;
+//                preview.setSurfaceProvider(binding.previewView.getSurfaceProvider());
         }
+
+
+
+        cameraProviderFuture.addListener(()->{
+            try {
+                ProcessCameraProvider cameraProvider = (ProcessCameraProvider) cameraProviderFuture.get();
+                mCameraProvider = cameraProvider;
+
+                bindPreview(cameraProvider);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, ContextCompat.getMainExecutor(getActivity()));
+
+
         return binding.getRoot();
     }
 
@@ -125,9 +210,9 @@ public class ScanFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (camAccessObj.getFlash() == Availability.UNAVAILABLE) {
-            menu.findItem(R.id.flash_toggle).setEnabled(false);
-        }
+//        if (camAccessObj.getFlash() == Availability.UNAVAILABLE) {
+//            menu.findItem(R.id.flash_toggle).setEnabled(false);
+//        }
 
     }
 
