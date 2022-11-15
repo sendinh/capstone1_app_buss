@@ -1,2 +1,4 @@
-package com.team03.dtuevent.ui.fragment;public class SearchAdapter {
+package com.team03.dtuevent.ui.fragment;
+
+public class SearchAdapter {
 }

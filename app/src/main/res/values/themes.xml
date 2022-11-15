@@ -22,4 +22,13 @@
     <style name="Theme.App.AlertDialogTheme.ButtonStyle" parent="Widget.Material3.Button.TextButton.Dialog">
         <item name="android:textColor">@color/pure_black</item>
     </style>
+    <style name="Widget.Material3.BottomNavigationView2" parent="Widget.Material3.BottomNavigationView">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
+    </style>
+    <style name="ThemeOverlay.App.BottomNavigationView" parent="">
+        <item name="colorPrimary">@color/pure_black</item>
+    </style>
+    <style name="ThemeOverlay.App.ToggleButtonGroupStyle" parent="">
+        <item name="colorPrimary">@color/pure_black</item>
+    </style>
 </resources>

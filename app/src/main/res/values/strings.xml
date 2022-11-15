@@ -99,5 +99,34 @@
     <string name="onboarding_welcome">Welcome</string>
     <string name="onboarding_welcome_summary">Thank you for using Code Scanner.\nClick next to learn more about the app and its features.</string>
     <string name="create">Create</string>
-
+    <string name="oss_link" translatable="false">https://github.com.....</string>
+    <string name="privacy_policy_url" translatable="false">https://github.com/........</string>
+    <string name="store_url">https://github.com/.....</string>
+    <string name="save">Save</string>
+    <string name="generated_qr_image">Generated QR Image</string>
+    <string name="qr_color">Colour</string>
+    <string name="edit_contents">Edit Content</string>
+    <string name="background_color">Background colour</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="prefix">Prefix</string>
+    <string name="suffix">Suffix</string>
+    <string name="company">Company</string>
+    <string name="job">Job</string>
+    <string name="street">Street</string>
+    <string name="zip_code">ZIP code</string>
+    <string name="region">Region</string>
+    <string name="country">Country</string>
+    <string name="additional_notes">Additional notes</string>
+    <string name="wifi_password_hint">Password (leave blank if open)</string>
+    <string name="wifi_ssid_hint">Network name/SSID</string>
+    <string name="wifi_enctype_hint">Encryption type:</string>
+    <string name="enter_contents_here">Enter contents…</string>
+    <string name="enter_url_here">Enter URL…</string>
+    <string name="sms_recipients_phone_number">Phone number of recipient</string>
+    <string name="image_saved">Image saved</string>
+    <string name="error">Error!</string>
+    <string name="ok">OK</string>
+    <string name="intent1_name">Scan code</string>
+    <string name="intent2_name">Create code from data</string>
 </resources>

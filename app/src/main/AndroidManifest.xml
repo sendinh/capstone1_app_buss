@@ -32,15 +32,57 @@
 <!--        <activity-->
 <!--            android:name=".MainLoginActivity"-->
 <!--            android:exported="false" />-->
-        <activity
-            android:name=".MainActivity"
+<!--        <activity-->
+<!--            android:name=".MainActivity"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
+        <activity android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter
+                android:label="@string/intent1_name">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <!--For scanning codes from image-->
+                <data android:mimeType="image/*"/>
+            </intent-filter>
+
+            <intent-filter
+                android:label="@string/intent2_name">
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <!--For creation of codes from data-->
+                <data android:mimeType="text/*"/>
+
+            </intent-filter>
+
         </activity>
+
+<!--        <activity android:name=".ui.CSOnboarding"-->
+<!--            android:label="@string/intro"-->
+<!--            android:exported="false">-->
+<!--        </activity>-->
+
+
+        <provider
+            android:authorities="com.team03.dtuevent.provider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/image_provider"/>
+        </provider>
     </application>
 
 </manifest>

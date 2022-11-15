@@ -1,66 +1,153 @@
 package com.team03.dtuevent.ui.fragment;
 
+
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import com.team03.dtuevent.R;
+import com.team03.dtuevent.Utils;
+import com.team03.dtuevent.callbacks.ManualResetPreferenceClickListener;
+import com.team03.dtuevent.misc.monetization.AdStrategy2;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PreferencesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class PreferencesFragment extends Fragment {
+public class PreferencesFragment extends PreferenceFragmentCompat {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public PreferencesFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PreferencesFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PreferencesFragment newInstance(String param1, String param2) {
-        PreferencesFragment fragment = new PreferencesFragment ( );
-        Bundle args = new Bundle ( );
-        args.putString ( ARG_PARAM1, param1 );
-        args.putString ( ARG_PARAM2, param2 );
-        fragment.setArguments ( args );
-        return fragment;
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.root_preferences, rootKey);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate ( savedInstanceState );
-        if (getArguments ( ) != null) {
-            mParam1 = getArguments ( ).getString ( ARG_PARAM1 );
-            mParam2 = getArguments ( ).getString ( ARG_PARAM2 );
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+
+        // Instantiate ads if on play flavour.
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        ViewGroup vg = (ViewGroup) v;
+        if (vg != null) {
+            AdStrategy2.getInstance(getContext())
+                    .addAdViewTo(vg);
         }
+
+
+        Preference oss_link = findPreference("open_source");
+        if (oss_link != null) {
+            oss_link.setOnPreferenceClickListener(preference -> {
+                Intent urlIntent = new Intent(Intent.ACTION_VIEW);
+                Uri url = Uri.parse(getString(R.string.oss_link));
+                urlIntent.setData(url);
+                boolean appAvailable = Utils.launchIntentCheckAvailable(urlIntent, requireContext());
+                if (!appAvailable) {
+                    Toast.makeText(getContext(), R.string.no_browsers, Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            });
+        }
+
+        Preference oss_licenses = findPreference("oss_licenses");
+        if (oss_licenses != null) {
+            setupOSSLicensesDialog(oss_licenses);
+        }
+
+
+//        if (findPreference("watch_ads_prefbtn") != null) {
+//
+//            findPreference("watch_ads_prefbtn").setOnPreferenceClickListener(new ManualResetPreferenceClickListener() {
+//                @Override
+//                public boolean onSingleClick(Preference p) {
+//                    new MaterialAlertDialogBuilder(requireContext(), R.style.Theme_App_AlertDialogTheme)
+//                            .setBackground(new ColorDrawable(Color.YELLOW))
+//                            .setTitle(R.string.rewarded_admob)
+//                            .setMessage(R.string.rewarded_dialog_prompt)
+//                            .setNegativeButton(R.string.cancel, (dialog, which) -> resetListener())
+//                            .setPositiveButton(R.string.next, (dialog, which) -> {
+//                                Toast.makeText(getActivity(), R.string.not_app_content, Toast.LENGTH_LONG).show();
+//
+//                                AdStrategy2.getInstance(getContext())
+//                                        .loadRewardedAdVideo(getActivity(), getView(), getResetCallback());
+//                            })
+//                            .setOnCancelListener(dialog -> resetListener())
+//                            .show();
+//                    return true;
+//                }
+//            });
+//        }
+
+        if (findPreference("privacy_policy") != null) {
+            findPreference("privacy_policy").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Utils.launchWebPageExternally(
+                            getContext(),
+                            Uri.parse(getString(R.string.privacy_policy_url))
+                    );
+                    return true;
+                }
+            });
+        }
+
+        if (findPreference("share_app") != null) {
+            findPreference("share_app").setOnPreferenceClickListener(preference -> {
+                // TODO this only links to Google Play, link to other stores soon!
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.promo_share_description, getString(R.string.store_url)));
+                sendIntent.setType("text/plain");
+
+                startActivity(sendIntent);
+
+                return true;
+            });
+        }
+
+        return v;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate ( R.layout.fragment_preferences, container, false );
+    private void setupOSSLicensesDialog(Preference preferenceToBeClicked) {
+        // WebView for displaying open-source licenses
+        WebView webView = new WebView(requireContext());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return shouldOverrideUrlLoading(Uri.parse(url));
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                Uri url = request.getUrl();
+                return shouldOverrideUrlLoading(url);
+            }
+
+            private boolean shouldOverrideUrlLoading(Uri url) {
+                Utils.launchWebPageExternally(getContext(), url);
+                return true;
+            }
+        });
+        webView.zoomBy(0.5F);
+
+        MaterialAlertDialogBuilder ossDialog = new MaterialAlertDialogBuilder(requireContext());
+        ossDialog.setView(webView);
+        AlertDialog finalDialog = ossDialog.create();
+
+        preferenceToBeClicked.setOnPreferenceClickListener(preference -> {
+            webView.loadUrl("file:///android_asset/licenses.html"); // Load from app's asset folder
+            finalDialog.show();
+            return true;
+        });
     }
 }
