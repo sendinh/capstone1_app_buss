@@ -1,0 +1,137 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "com.team03.dtuevent"
+        minSdk 29
+        targetSdk 32
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+//    buildTypes {
+//        release {
+//            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//        }
+//    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+        }
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+        }
+
+    }
+    // Add Product Flavors for Google Play, F-Droid, and general release versions.
+    flavorDimensions "standard"
+    productFlavors {
+        play {
+            dimension "standard"
+        }
+        general {
+            dimension "standard"
+            getIsDefault().set(true)
+        }
+        foss {
+            dimension "standard"
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
+        dataBinding true
+    }
+}
+
+dependencies {
+
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
+    implementation 'androidx.navigation:navigation-fragment:2.3.5'
+    implementation 'androidx.navigation:navigation-ui:2.3.5'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "androidx.annotation:annotation:1.3.0"
+    implementation 'androidx.preference:preference:1.1.1'
+
+    testImplementation 'junit:junit:4.13'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    testImplementation 'androidx.test:runner:1.4.0'
+    implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
+    implementation 'com.google.android.material:material:1.6.0-alpha01'
+
+    implementation 'com.amitshekhar.android:android-networking:1.0.2'
+
+
+    // CameraX:
+    def camerax_version = "1.1.0-alpha12"
+    // CameraX core library using camera2 implementation
+    implementation "androidx.camera:camera-camera2:$camerax_version"
+    // CameraX Lifecycle Library
+    implementation "androidx.camera:camera-lifecycle:$camerax_version"
+    // CameraX View class
+    implementation "androidx.camera:camera-view:1.0.0-alpha32"
+
+
+    // ML Kit on GMS:
+    implementation 'com.google.mlkit:barcode-scanning:16.0.3'
+
+    // Room:
+    implementation "androidx.room:room-runtime:2.4.0"
+    annotationProcessor "androidx.room:room-compiler:2.4.0"
+
+
+    // Moshi serialization library:
+    implementation("com.squareup.moshi:moshi:1.11.0")
+
+    // ZXing:
+    implementation 'com.google.zxing:core:3.3.2'
+
+//    // Color Picker:
+//    implementation 'com.azeesoft.lib.colorpicker:colorpicker:1.0.8@aar'
+    implementation 'com.github.yukuku:ambilwarna:2.0.1'
+
+
+    // VCard creator:
+    implementation 'com.googlecode.ez-vcard:ez-vcard:0.11.2'
+//
+//    // App Onboarding:
+ //   implementation 'com.heinrichreimersoftware:material-intro:2.0.0'
+    // ACRA crash reporting:
+    implementation "ch.acra:acra-mail:5.9.0-rc2"
+
+    // region Google Play specific libraries
+    playImplementation 'com.google.android.gms:play-services-ads:20.5.0'
+
+    // For apps targeting Android 12, add WorkManager dependency.
+    constraints {
+        playImplementation('androidx.work:work-runtime:2.7.0') {
+            because '''androidx.work:work-runtime:2.1.0 pulled from play-services-ads
+                   has a bug using PendingIntent without FLAG_IMMUTABLE or
+                   FLAG_MUTABLE and will fail in apps targeting S+.'''
+        }
+    }
+}
+//repositories {
+//        maven {
+//            url 'https://bintray.com/azeesoft/maven'
+//        }
+//}

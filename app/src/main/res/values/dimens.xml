@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="bottom_nav_height">75dp</dimen>
+    <dimen name="dimen_16dp">16dp</dimen>
+    <dimen name="size_arrow_button">30dp</dimen>
+    <dimen name="font_size_x_large">20dp</dimen>
+    <dimen name="dimen_8dp">8dp</dimen>
+</resources>

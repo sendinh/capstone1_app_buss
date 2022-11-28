@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/scannerFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_crop_free_24"
+        android:title="@string/scan"/>
+
+    <item
+        android:id="@+id/historyFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_history_24"
+        android:title="@string/history"/>
+
+    <item
+        android:id="@+id/searchFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="@string/search" />
+    <item
+        android:id="@+id/preferencesFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_build_24"
+        android:title="@string/preferences"/>
+
+
+    
+</menu>

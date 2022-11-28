@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#fff"
+    android:orientation="vertical"
+    android:padding="@dimen/dimen_16dp">
+
+    <ImageView
+        android:id="@+id/imgDismiss"
+        android:layout_width="@dimen/size_arrow_button"
+        android:layout_height="@dimen/size_arrow_button"
+        android:layout_gravity="end"
+        android:scaleType="center"
+        android:src="@drawable/ic_x" />
+
+
+    <ImageView
+        android:id="@+id/img_bg"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_success" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Set Timer"
+        android:textColor="#1E1C1C"
+        android:textSize="@dimen/font_size_x_large" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_8dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnInputDialogOK"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_button_ok"
+            android:text="@string/ok"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+</LinearLayout>
